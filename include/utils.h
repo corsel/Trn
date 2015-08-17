@@ -7,6 +7,7 @@ struct Vec2
 	float y;
 	
 	Vec2(float argX = 0.0f, float argY = 0.0f);
+	Vec2 operator/(float argDivisor);
 };
 
 struct ColorRGBA
