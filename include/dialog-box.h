@@ -3,18 +3,21 @@
 
 #include <vector>
 #include <GL/freeglut.h>
+#include "animation.h"
 #include "utils.h"
 
 //Bubble class
 class Bubble
 {
 private:
+	Vec2 posn;
 	Vec2 halfSize;
 	float filletSize;
+	Vec2Lerp *animation = NULL;
 	
 public:
 	Bubble(void);
-	Bubble(Vec2 argSize, float argFilletSize);
+	Bubble(Vec2 argSize, Vec2 argPosn = Vec2(0.0f, 0.0f), float argFilletSize = 0.0f);
 	void render(void);
 };
 
@@ -23,7 +26,7 @@ class BubbleContainer //singleton
 {
 private:
 	std::vector<Bubble*> bubbleVector;
-	BubbleContainer *instance = NULL;
+	static BubbleContainer *instance;
 	BubbleContainer(void);
 	
 public:
