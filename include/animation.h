@@ -2,7 +2,20 @@
 #define ANIMATION_H_INCLUDED
 
 #include <iostream>
+#include <pthread.h>
 #include "utils.h"
+
+class AnimationServer //singleton
+{
+private:
+	pthread_t thread;
+	int threadHandle;
+	static AnimationServer *instance;
+	AnimationServer(void);
+	
+public:
+	AnimationServer *getInstance(void);	
+};
 
 template <typename T>
 class Animation

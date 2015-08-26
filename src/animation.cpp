@@ -1,5 +1,20 @@
 #include "animation.h"
 
+//AnimationServer class
+AnimationServer *AnimationServer::instance = NULL;
+AnimationServer::AnimationServer() 
+{
+	
+}
+AnimationServer *AnimationServer::getInstance()
+{
+	if (instance == NULL)
+	{
+		instance = new AnimationServer();
+	}
+	return instance;
+}
+
 //Animation class
 template <typename T>
 Animation<T>::Animation(T *argRef, T argStart, T argEnd, float argLifeTime)
