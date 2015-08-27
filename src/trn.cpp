@@ -15,10 +15,14 @@ int main(int argc, char **argv)
 */
 	Vec2 testRef(0.0f, 0.0f);
 	Animation<Vec2> *test = new Vec2Lerp(&testRef, Vec2(1.0f, 0.0f), Vec2(2.0f, 1.0f), 5.0f);
+	AnimationServer::getInstance()->registerAnimation(test);
+	
+	/*
 	while(test->getIsAlive())
 	{
 		test->step(0.1f);
 	}
+	*/
 	std::cout << "\nfin.\n";
 	return 0;
 }

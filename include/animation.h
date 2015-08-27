@@ -2,20 +2,9 @@
 #define ANIMATION_H_INCLUDED
 
 #include <iostream>
+#include <vector>
 #include <pthread.h>
 #include "utils.h"
-
-class AnimationServer //singleton
-{
-private:
-	pthread_t thread;
-	int threadHandle;
-	static AnimationServer *instance;
-	AnimationServer(void);
-	
-public:
-	AnimationServer *getInstance(void);	
-};
 
 template <typename T>
 class Animation
@@ -32,6 +21,27 @@ public:
 	Animation(T *argRef, T argStart, T argEnd, float argLifeTime = 0.0f);
 	virtual void step(float argStepSize) = 0;
 	virtual bool getIsAlive(void);
+};
+
+class AnimationServer //singleton
+{
+private:
+	pthread_t handle;
+	static bool killFlag;
+	
+	static std::vector<Animation<Vec2>*> vec2AnimVector;
+	static std::vector<Animation<float>*> floatAnimVector;
+	
+	static AnimationServer *instance;
+	
+	AnimationServer(void);
+	static void *threadLoop(void*);
+
+public:
+	~AnimationServer(void);
+	static AnimationServer *getInstance(void);
+	void registerAnimation(Animation<Vec2> *argAnimation);
+	void registerAnimation(Animation<float> *argAnimation);
 };
 
 class Vec2Lerp : public Animation<Vec2>
