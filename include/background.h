@@ -8,7 +8,6 @@
 #include <GL/gl.h>
 #include "utils.h"
 #include "animation.h"
-#include "timer.h"
 
 class Layer
 {

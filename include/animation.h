@@ -3,8 +3,20 @@
 
 #include <iostream>
 #include <vector>
+#include <sys/time.h>
 #include <pthread.h>
 #include "utils.h"
+
+class Timer
+{
+private:
+	long prevSec;
+	long prevUsec;
+
+public:
+	Timer(void);
+	void lock(int argMilliseconds);
+};
 
 template <typename T>
 class Animation

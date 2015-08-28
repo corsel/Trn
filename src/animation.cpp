@@ -1,5 +1,18 @@
 #include "animation.h"
 
+//Timer class
+Timer::Timer() {}
+void Timer::lock(int argMilliseconds)
+{
+	do
+	{
+		timeval tmpTime;
+		gettimeofday(&tmpTime, NULL);
+		long tmpDelta = (tmpTime.tv_sec - prevSec) * 1000 + (tmpTime.tv_usec - prevUsec) / 1000;
+		if (tmpDelta >= argMilliseconds) break;
+	} while (true);
+}
+
 //Animation class
 template <typename T>
 Animation<T>::Animation(T *argRef, T argStart, T argEnd, float argLifeTime)
