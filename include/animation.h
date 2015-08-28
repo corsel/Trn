@@ -12,22 +12,23 @@ class Animation
 protected:
 	float lifeTime;
 	float currentTime;
-	bool isAlive;
+	bool isDead;
 	
 	T startVal, endVal;
 	T *ref;
 	
 public:
 	Animation(T *argRef, T argStart, T argEnd, float argLifeTime = 0.0f);
+	virtual ~Animation(void);
 	virtual void step(float argStepSize) = 0;
-	virtual bool getIsAlive(void);
+	virtual bool getIsDead(void);
 };
 
 class AnimationServer //singleton
 {
 private:
 	pthread_t handle;
-	static bool killFlag;
+	bool killFlag;
 	
 	static std::vector<Animation<Vec2>*> vec2AnimVector;
 	static std::vector<Animation<float>*> floatAnimVector;
@@ -50,6 +51,7 @@ private:
 	
 public:
 	Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifeTime = 0.0f);
+	~Vec2Lerp(void);
 	void step(float argStepSize); //virtual implementation
 };
 

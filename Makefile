@@ -10,5 +10,5 @@ DEBUGOUT=bin/trnd
 build: 
 	g++ $(INCLUDE) $(OUT) $(SOURCE) $(LIB)
 
-build-debug:
-	g++ -g $(INCLUDE) $(OUT) $(SOURCE) $(LIB)
+debug:
+	g++ -g $(INCLUDE) $(OUT)d $(SOURCE) $(LIB)
