@@ -55,5 +55,15 @@ public:
 	void step(float argStepSize); //virtual implementation
 };
 
+class ColorLerp : public Animation<ColorRGBA>
+{
+private:
+
+public:
+	ColorLerp(ColorRGBA *argColor, ColorRGBA argStart, ColorRGBA argEnd, float argLifeTime = 0.0f);
+	~ColorLerp(void);
+	void step(float argStepSize); //virtual implementation
+};
+
 #endif //ANIMATION_H_INCLUDED
 

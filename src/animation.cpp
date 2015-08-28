@@ -38,7 +38,7 @@ void *AnimationServer::threadLoop(void *argArgs) //static
 				vec2AnimVector.erase(vec2AnimVector.begin() + i);
 				break;
 			}
-			vec2AnimVector[i]->step(0.1f);
+			vec2AnimVector[i]->step(0.5f);
 		}
 		/*
 		for (int i = 0; i < floatAnimVector.size(); i++)
@@ -76,7 +76,7 @@ void Vec2Lerp::step(float argStepSize) //virtual implementation
 {
 	static int iteration = 0; //debug
 	currentTime += argStepSize;
-	if (currentTime >= lifeTime)
+	if (currentTime >= lifeTime && lifeTime != 0.0f)
 	{
 		*ref = endVal;
 		std::cout << "Debug - Vec2Lerp: Animation is finished.\n";
