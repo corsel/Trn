@@ -14,8 +14,6 @@ private:
 	long prevUsec;
 	int mSecPeriod;
 	
-	int getDelta(void);
-
 public:
 	Timer(int argMSecPeriod = (int)(1000.0f / 30.0f));
 	void start(void);
@@ -29,6 +27,7 @@ protected:
 	float lifeTime;
 	float currentTime;
 	bool isDead;
+	Animation *next = NULL;
 	
 	T startVal, endVal;
 	T *ref;
@@ -38,6 +37,7 @@ public:
 	virtual ~Animation(void);
 	virtual void step(float argStepSize) = 0;
 	virtual bool getIsDead(void);
+	Animation *getNext(void);
 };
 
 class AnimationServer //singleton

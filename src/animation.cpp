@@ -1,10 +1,6 @@
 #include "animation.h"
 
 //Timer class
-int Timer::getDelta()
-{
-	
-} 
 Timer::Timer(int argMSecPeriod)
 : mSecPeriod(argMSecPeriod) {}
 void Timer::start()
@@ -46,6 +42,13 @@ Animation<T>::~Animation()
 }
 template <typename T>
 bool Animation<T>::getIsDead() {return isDead;}
+template <typename T>
+Animation<T> *Animation<T>::getNext()
+{
+	if (next != NULL)
+		return next;
+	return NULL;
+}
 
 //AnimationServer class
 std::vector<Animation<Vec2>*> AnimationServer::vec2AnimVector;
@@ -68,6 +71,12 @@ void *AnimationServer::threadLoop(void *argArgs) //static
 		{
 			if (vec2AnimVector[i]->getIsDead())
 			{
+				Animation<Vec2> *tmpNext = vec2AnimVector[i]->getNext();
+				if (tmpNext != NULL)
+				{
+					std::cout << "Debug - AnimationServer: Animation binded.\n";
+					vec2AnimVector.push_back(tmpNext);
+				}
 				std::cout << "Debug - AnimationServer: Animation killed.\n";
 				delete vec2AnimVector[i];
 				vec2AnimVector.erase(vec2AnimVector.begin() + i);
