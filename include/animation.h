@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include "utils.h"
 
+class Animation; //forward declaration
+
 class Timer
 {
 private:
@@ -17,27 +19,7 @@ private:
 public:
 	Timer(int argMSecPeriod = (int)(1000.0f / 30.0f));
 	void start(void);
-	void sleep(void);
-};
-
-template <typename T>
-class Animation
-{
-protected:
-	float lifeTime;
-	float currentTime;
-	bool isDead;
-	Animation *next = NULL;
-	
-	T startVal, endVal;
-	T *ref;
-	
-public:
-	Animation(T *argRef, T argStart, T argEnd, float argLifeTime = 0.0f);
-	virtual ~Animation(void);
-	virtual void step(float argStepSize) = 0;
-	virtual bool getIsDead(void);
-	Animation *getNext(void);
+	void idle(void);
 };
 
 class AnimationServer //singleton
@@ -45,9 +27,9 @@ class AnimationServer //singleton
 private:
 	pthread_t handle;
 	bool killFlag;
+	Timer timer;
 	
-	static std::vector<Animation<Vec2>*> vec2AnimVector;
-	static std::vector<Animation<float>*> floatAnimVector;
+	static std::vector<Animation*> animVector;
 	
 	static AnimationServer *instance;
 	
@@ -57,28 +39,39 @@ private:
 public:
 	~AnimationServer(void);
 	static AnimationServer *getInstance(void);
-	void registerAnimation(Animation<Vec2> *argAnimation);
-	void registerAnimation(Animation<float> *argAnimation);
+	void registerAnimation(Animation *argAnimation);
 };
 
-class Vec2Lerp : public Animation<Vec2>
+class Animation //abstract
 {
-private:
+protected:
+	float lifetime;
+	float currentTime;
+	bool isDead;
+	Animation *next = NULL;
+	
+	void setNext(Animation *argNext);
 	
 public:
-	Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifeTime = 0.0f);
-	~Vec2Lerp(void);
-	void step(float argStepSize); //virtual implementation
+	Animation(float argLifetime, Animation *argPrevious = NULL);
+	virtual ~Animation(void);
+	virtual void step(void) = 0;
+	virtual bool getIsDead(void);
 };
 
-class ColorLerp : public Animation<ColorRGBA>
+
+class Vec2Lerp : public Animation
 {
 private:
-
+	Vec2 start, end;
+	Vec2 stepSize;
+	Vec2 *ref;
+	
 public:
-	ColorLerp(ColorRGBA *argColor, ColorRGBA argStart, ColorRGBA argEnd, float argLifeTime = 0.0f);
-	~ColorLerp(void);
-	void step(float argStepSize); //virtual implementation
+	Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifetime, Animation *argPrevious = NULL);
+	Vec2Lerp(Vec2 *argRef, Vec2 argRelEnd, float argLifetime, Animation *argPrevious = NULL);
+	~Vec2Lerp(void);
+	void step(void); //virtual implementation
 };
 
 #endif //ANIMATION_H_INCLUDED

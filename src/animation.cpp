@@ -10,7 +10,7 @@ void Timer::start()
 	prevSec = tmpTime.tv_sec;
 	prevUsec = tmpTime.tv_usec;
 }
-void Timer::sleep()
+void Timer::idle()
 {
 	timeval tmpTime;
 	gettimeofday(&tmpTime, NULL);
@@ -31,28 +31,8 @@ void Timer::sleep()
 	std::cout << "Debug - Timer: Timer step, delta time: " << tmpDelta << std::endl;
 }
 
-//Animation class
-template <typename T>
-Animation<T>::Animation(T *argRef, T argStart, T argEnd, float argLifeTime)
-: ref(argRef), startVal(argStart), endVal(argEnd), lifeTime(argLifeTime), isDead(false) {}
-template <typename T>
-Animation<T>::~Animation()
-{
-	std::cout << "Debug - Animation: Destructor called.\n";
-}
-template <typename T>
-bool Animation<T>::getIsDead() {return isDead;}
-template <typename T>
-Animation<T> *Animation<T>::getNext()
-{
-	if (next != NULL)
-		return next;
-	return NULL;
-}
-
 //AnimationServer class
-std::vector<Animation<Vec2>*> AnimationServer::vec2AnimVector;
-std::vector<Animation<float>*> AnimationServer::floatAnimVector;
+std::vector<Animation*> AnimationServer::animVector;
 AnimationServer *AnimationServer::instance = NULL;
 AnimationServer::AnimationServer()
 : killFlag(true)
@@ -67,32 +47,21 @@ void *AnimationServer::threadLoop(void *argArgs) //static
 {
 	while(AnimationServer::getInstance()->killFlag)
 	{
-		for (int i = 0; i < vec2AnimVector.size(); i++)
+		instance->timer.start();
+		for (int i = 0; i < animVector.size(); i++)
 		{
-			if (vec2AnimVector[i]->getIsDead())
+			if (animVector[i]->getIsDead())
 			{
-				Animation<Vec2> *tmpNext = vec2AnimVector[i]->getNext();
-				if (tmpNext != NULL)
-				{
-					std::cout << "Debug - AnimationServer: Animation binded.\n";
-					vec2AnimVector.push_back(tmpNext);
-				}
 				std::cout << "Debug - AnimationServer: Animation killed.\n";
-				delete vec2AnimVector[i];
-				vec2AnimVector.erase(vec2AnimVector.begin() + i);
-				break;
+				delete animVector[i];
+				animVector.erase(animVector.begin() + i);
+				continue;
 			}
-			vec2AnimVector[i]->step(0.5f);
+			animVector[i]->step();
 		}
-		/*
-		for (int i = 0; i < floatAnimVector.size(); i++)
-		{
-			floatAnimVector[i]->step(0.1f);
-		}
-		*/
+		instance->timer.idle();
 	}
 }
-
 AnimationServer *AnimationServer::getInstance() //static
 {
 	if (instance == NULL)
@@ -101,25 +70,44 @@ AnimationServer *AnimationServer::getInstance() //static
 	}
 	return instance;
 }
-void AnimationServer::registerAnimation(Animation<Vec2> *argAnimation) 
+void AnimationServer::registerAnimation(Animation *argAnimation) 
 {
-	vec2AnimVector.push_back(argAnimation);
-}
-void AnimationServer::registerAnimation(Animation<float> *argAnimation) 
-{
-	floatAnimVector.push_back(argAnimation);
+	animVector.push_back(argAnimation);
 }
 
-//Lerp class
-Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifeTime) : Animation<Vec2>(argRef, argStart, argEnd, argLifeTime) {}
+//Animation class
+void Animation::setNext(Animation *argNext)
+{
+	next = argNext;
+}
+Animation::Animation(float argLifetime, Animation *argPrevious)
+: isDead(false), lifetime(argLifetime)
+{
+	if (argPrevious != NULL)
+		argPrevious->setNext(this);
+}
+Animation::~Animation()
+{
+	if (next != NULL)
+		AnimationServer::getInstance()->registerAnimation(next);
+	std::cout << "Debug - Animation: Destructor called.\n";
+}
+bool Animation::getIsDead() { return isDead; }
+
+//Vec2Lerp class
+Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifetime, Animation *argPrevious)
+: Animation(argLifetime, argPrevious), ref(argRef), start(argStart), end(argEnd) {}
+Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argRelEnd, float argLifetime, Animation *argPrevious)
+: Animation(argLifetime, argPrevious), ref(argRef), start(*ref), end(start + argRelEnd) {}
 Vec2Lerp::~Vec2Lerp()
 {
 	std::cout << "Debug - Vec2Lerp: Destructor called.\n";
 }
-void Vec2Lerp::step(float argStepSize) //virtual implementation
+void Vec2Lerp::step() //virtual implementation
 {
+/*
 	static int iteration = 0; //debug
-	currentTime += argStepSize;
+	currentTime += stepSize;
 	if (currentTime >= lifeTime && lifeTime != 0.0f)
 	{
 		*ref = endVal;
@@ -129,4 +117,5 @@ void Vec2Lerp::step(float argStepSize) //virtual implementation
 	}
 		*ref = startVal + (endVal - startVal) * (currentTime / lifeTime);
 		std::cout << "Debug - Vec2Lerp: New step values are;\n\titeration: " << iteration++ << "\tcurrentTime: " << currentTime << "\tvalue: <" << ref->x << ", " << ref->y << ">\n";
+*/
 }
