@@ -21,13 +21,24 @@ void animationTest()
 	Animation<Vec2> *test = new Vec2Lerp(&testRef, Vec2(1.0f, 0.0f), Vec2(2.0f, 1.0f), 5.0f);
 	AnimationServer::getInstance()->registerAnimation(test);	
 }
+
+void timerTest(int argMSecPeriod)
+{
+	Timer timer(argMSecPeriod);
+	for (int i = 0; i < 10; i++)
+	{
+		timer.start();
+		timer.sleep();
+	}
+}
 }
 
 int main(int argc, char **argv)
 {
 
 	//Test::animationTest();
-	Test::displayTest(argc, argv);
+	//Test::displayTest(argc, argv);
+	Test::timerTest(atoi(argv[1]));
 
 	std::cout << "\nfin.\n";
 	return 0;

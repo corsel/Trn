@@ -12,10 +12,14 @@ class Timer
 private:
 	long prevSec;
 	long prevUsec;
+	int mSecPeriod;
+	
+	int getDelta(void);
 
 public:
-	Timer(void);
-	void lock(int argMilliseconds);
+	Timer(int argMSecPeriod = (int)(1000.0f / 30.0f));
+	void start(void);
+	void sleep(void);
 };
 
 template <typename T>

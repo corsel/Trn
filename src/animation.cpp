@@ -1,16 +1,38 @@
 #include "animation.h"
 
 //Timer class
-Timer::Timer() {}
-void Timer::lock(int argMilliseconds)
+int Timer::getDelta()
 {
+	
+} 
+Timer::Timer(int argMSecPeriod)
+: mSecPeriod(argMSecPeriod) {}
+void Timer::start()
+{
+	timeval tmpTime;
+	gettimeofday(&tmpTime, NULL);
+	prevSec = tmpTime.tv_sec;
+	prevUsec = tmpTime.tv_usec;
+}
+void Timer::sleep()
+{
+	timeval tmpTime;
+	gettimeofday(&tmpTime, NULL);
+	int tmpDelta = (tmpTime.tv_sec - prevSec) * 1000 + (tmpTime.tv_usec - prevUsec) / 1000;
+	if (tmpDelta > mSecPeriod)
+	{
+		 std::cout << "Debug - Timer: Timer has lagged. delta time: " << tmpDelta << " expected period: " << mSecPeriod << std::endl;
+		 prevSec = tmpTime.tv_sec;
+		 prevUsec = tmpTime.tv_usec;
+		 return;
+	}
 	do
 	{
-		timeval tmpTime;
 		gettimeofday(&tmpTime, NULL);
-		long tmpDelta = (tmpTime.tv_sec - prevSec) * 1000 + (tmpTime.tv_usec - prevUsec) / 1000;
-		if (tmpDelta >= argMilliseconds) break;
+		tmpDelta = (tmpTime.tv_sec - prevSec) * 1000 + (tmpTime.tv_usec - prevUsec) / 1000;
+		if (tmpDelta >= mSecPeriod) break;
 	} while (true);
+	std::cout << "Debug - Timer: Timer step, delta time: " << tmpDelta << std::endl;
 }
 
 //Animation class
