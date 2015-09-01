@@ -35,7 +35,7 @@ void Timer::idle()
 std::vector<Animation*> AnimationServer::animVector;
 AnimationServer *AnimationServer::instance = NULL;
 AnimationServer::AnimationServer()
-: killFlag(true)
+: killFlag(true), stepSize((int)(1000.0f / 30.0f)), timer(stepSize)
 {
 	pthread_create(&handle, NULL, threadLoop, NULL);
 }
@@ -45,6 +45,7 @@ AnimationServer::~AnimationServer()
 }
 void *AnimationServer::threadLoop(void *argArgs) //static
 {
+	std::cout << "Debug - AnimationServer: threadLoop started.\n";
 	while(AnimationServer::getInstance()->killFlag)
 	{
 		instance->timer.start();
@@ -74,6 +75,7 @@ void AnimationServer::registerAnimation(Animation *argAnimation)
 {
 	animVector.push_back(argAnimation);
 }
+//int AnimationServer::getStepSize() { return stepSize; }
 
 //Animation class
 void Animation::setNext(Animation *argNext)
@@ -105,6 +107,10 @@ Vec2Lerp::~Vec2Lerp()
 }
 void Vec2Lerp::step() //virtual implementation
 {
+	static int iteration = 0;
+	std::cout << "Debug - Vec2Lerp: step called: " << iteration++ << std::endl;
+	
+	//Vec2 step = lifeTime / 
 /*
 	static int iteration = 0; //debug
 	currentTime += stepSize;

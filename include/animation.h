@@ -28,6 +28,7 @@ private:
 	pthread_t handle;
 	bool killFlag;
 	Timer timer;
+	const int stepSize;
 	
 	static std::vector<Animation*> animVector;
 	
@@ -40,6 +41,7 @@ public:
 	~AnimationServer(void);
 	static AnimationServer *getInstance(void);
 	void registerAnimation(Animation *argAnimation);
+	//int getStepSize(void);
 };
 
 class Animation //abstract
