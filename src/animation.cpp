@@ -2,7 +2,10 @@
 
 //Timer class
 Timer::Timer(int argMSecPeriod)
-: mSecPeriod(argMSecPeriod) {}
+: mSecPeriod(argMSecPeriod) 
+{
+	std::cout << "Debug - Timer: Constructor called with period " << mSecPeriod << std::endl;
+}
 void Timer::start()
 {
 	timeval tmpTime;
@@ -28,19 +31,20 @@ void Timer::idle()
 		tmpDelta = (tmpTime.tv_sec - prevSec) * 1000 + (tmpTime.tv_usec - prevUsec) / 1000;
 		if (tmpDelta >= mSecPeriod) break;
 	} while (true);
-	std::cout << "Debug - Timer: Timer step, delta time: " << tmpDelta << std::endl;
 }
 
 //AnimationServer class
 std::vector<Animation*> AnimationServer::animVector;
 AnimationServer *AnimationServer::instance = NULL;
 AnimationServer::AnimationServer()
-: killFlag(true), stepSize((int)(1000.0f / 30.0f)), timer(stepSize)
+: killFlag(true), stepSize((int)(1000.0f / 30.0f))
 {
+	timer = new Timer(stepSize);
 	pthread_create(&handle, NULL, threadLoop, NULL);
 }
 AnimationServer::~AnimationServer()
 {
+	delete timer;
 	pthread_exit(NULL);
 }
 void *AnimationServer::threadLoop(void *argArgs) //static
@@ -48,19 +52,19 @@ void *AnimationServer::threadLoop(void *argArgs) //static
 	std::cout << "Debug - AnimationServer: threadLoop started.\n";
 	while(AnimationServer::getInstance()->killFlag)
 	{
-		instance->timer.start();
+		instance->timer->start();
 		for (int i = 0; i < animVector.size(); i++)
 		{
 			if (animVector[i]->getIsDead())
 			{
-				std::cout << "Debug - AnimationServer: Animation killed.\n";
+				std::cout << "Debug - AnimationServer: Animation killed: " << animVector[i] << std::endl;
 				delete animVector[i];
 				animVector.erase(animVector.begin() + i);
 				continue;
 			}
 			animVector[i]->step();
 		}
-		instance->timer.idle();
+		instance->timer->idle();
 	}
 }
 AnimationServer *AnimationServer::getInstance() //static
@@ -75,7 +79,7 @@ void AnimationServer::registerAnimation(Animation *argAnimation)
 {
 	animVector.push_back(argAnimation);
 }
-//int AnimationServer::getStepSize() { return stepSize; }
+int AnimationServer::getStepSize() { return stepSize; }
 
 //Animation class
 void Animation::setNext(Animation *argNext)
@@ -83,7 +87,7 @@ void Animation::setNext(Animation *argNext)
 	next = argNext;
 }
 Animation::Animation(float argLifetime, Animation *argPrevious)
-: isDead(false), lifetime(argLifetime)
+: isDead(false), lifetime(argLifetime), iteration(0)
 {
 	if (argPrevious != NULL)
 		argPrevious->setNext(this);
@@ -98,30 +102,31 @@ bool Animation::getIsDead() { return isDead; }
 
 //Vec2Lerp class
 Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifetime, Animation *argPrevious)
-: Animation(argLifetime, argPrevious), ref(argRef), start(argStart), end(argEnd) {}
+: Animation(argLifetime, argPrevious), ref(argRef), start(argStart), end(argEnd) 
+{
+	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
+	stepDelta = (end - start) / numIterations;
+	*ref = start;
+}
 Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argRelEnd, float argLifetime, Animation *argPrevious)
-: Animation(argLifetime, argPrevious), ref(argRef), start(*ref), end(start + argRelEnd) {}
+: Animation(argLifetime, argPrevious), ref(argRef), start(*ref), end(start + argRelEnd) 
+{
+	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
+	stepDelta = (end - start) / numIterations;
+	*ref = start;
+}
 Vec2Lerp::~Vec2Lerp()
 {
 	std::cout << "Debug - Vec2Lerp: Destructor called.\n";
 }
 void Vec2Lerp::step() //virtual implementation
 {
-	static int iteration = 0;
-	std::cout << "Debug - Vec2Lerp: step called: " << iteration++ << std::endl;
-	
-	//Vec2 step = lifeTime / 
-/*
-	static int iteration = 0; //debug
-	currentTime += stepSize;
-	if (currentTime >= lifeTime && lifeTime != 0.0f)
+	std::cout << "Debug - Vec2Lerp: \n\tanimation: " << this << "\tstep: " << iteration++ << "\tvalue: <" << ref->x << ", " << ref->y << ">\n";
+	*ref += stepDelta;
+	if (iteration >= numIterations)
 	{
-		*ref = endVal;
-		std::cout << "Debug - Vec2Lerp: Animation is finished.\n";
+		*ref = end;
 		isDead = true;
-		return;
+		std::cout << "Debug - Vec2Lerp: killing animation " << this << std::endl;
 	}
-		*ref = startVal + (endVal - startVal) * (currentTime / lifeTime);
-		std::cout << "Debug - Vec2Lerp: New step values are;\n\titeration: " << iteration++ << "\tcurrentTime: " << currentTime << "\tvalue: <" << ref->x << ", " << ref->y << ">\n";
-*/
 }

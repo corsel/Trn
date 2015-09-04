@@ -27,7 +27,7 @@ class AnimationServer //singleton
 private:
 	pthread_t handle;
 	bool killFlag;
-	Timer timer;
+	Timer *timer;
 	const int stepSize;
 	
 	static std::vector<Animation*> animVector;
@@ -41,7 +41,7 @@ public:
 	~AnimationServer(void);
 	static AnimationServer *getInstance(void);
 	void registerAnimation(Animation *argAnimation);
-	//int getStepSize(void);
+	int getStepSize(void);
 };
 
 class Animation //abstract
@@ -50,6 +50,7 @@ protected:
 	float lifetime;
 	float currentTime;
 	bool isDead;
+	int iteration;
 	Animation *next = NULL;
 	
 	void setNext(Animation *argNext);
@@ -66,7 +67,8 @@ class Vec2Lerp : public Animation
 {
 private:
 	Vec2 start, end;
-	Vec2 stepSize;
+	Vec2 stepDelta;
+	int numIterations;
 	Vec2 *ref;
 	
 public:
