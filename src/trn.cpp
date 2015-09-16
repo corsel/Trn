@@ -13,7 +13,7 @@ void displayTest(int argc, char **argv)
 	TrnGlutFunctions::init(&argc, argv);
 	activeLevel = new Level();
 	glutMainLoop();
-	parseXml("data/test-file");
+	//parseXml("data/test-file");
 }
 
 void animationTest()
@@ -24,6 +24,14 @@ void animationTest()
 	Animation *testAnim2 = new Vec2Lerp(&testRef, Vec2(2.0f, 1.0f), Vec2(0.0f, 1.0f), 4900.0f);
 	AnimationServer::getInstance()->registerAnimation(testAnim);	
 	AnimationServer::getInstance()->registerAnimation(testAnim2);	
+}
+
+void animatedObjectTest(int argc, char **argv)
+{
+	TrnGlutFunctions::init(&argc, argv);
+	activeLevel = new Level();
+	activeLevel->pushObject(new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f)));
+	glutMainLoop();
 }
 
 void timerTest(int argMSecPeriod)
@@ -41,9 +49,10 @@ void timerTest(int argMSecPeriod)
 int main(int argc, char **argv)
 {
 
-	Test::animationTest();
+	//Test::animationTest();
 	//Test::displayTest(argc, argv);
 	//Test::timerTest(atoi(argv[1]));
+	Test::animatedObjectTest(argc, argv);
 
 	while(1);
 	
