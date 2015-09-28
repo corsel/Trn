@@ -30,7 +30,7 @@ void animatedObjectTest(int argc, char **argv)
 {
 	TrnGlutFunctions::init(&argc, argv);
 	activeLevel = new Level();
-	activeLevel->pushObject(new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f)));
+	//activeLevel->pushObject(new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f)));
 	glutMainLoop();
 }
 
@@ -54,8 +54,7 @@ int main(int argc, char **argv)
 	//Test::timerTest(atoi(argv[1]));
 	Test::animatedObjectTest(argc, argv);
 
-	while(1);
-	
 	std::cout << "\nfin.\n";
+	while(1);
 	return 0;
 }

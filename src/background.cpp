@@ -4,11 +4,12 @@
 Layer::Layer(float argDistance /* = LAYER_DEFAULT_DISTANCE */)
 : distance(argDistance)
 {
-	Vec2Lerp *testAnim = new Vec2Lerp(&position, Vec2(0.0f, 0.0f), Vec2(0.5f, 0.3f), 9999.0f);
-	AnimationServer::getInstance()->registerAnimation(testAnim);
+	//Vec2Lerp *testAnim = new Vec2Lerp(&position, Vec2(0.0f, 0.0f), Vec2(0.5f, 0.3f), 9999.0f);
+	//AnimationServer::getInstance()->registerAnimation(testAnim);
 }
 void Layer::render(float argOffset)
 {
+	/*
 	glPushMatrix();
 	glTranslatef(argOffset / distance, 0.0f, 0.0f);
 	glTranslatef(position.x, position.y, 0.0f);
@@ -20,6 +21,7 @@ void Layer::render(float argOffset)
 	glVertex2f(-0.3f, 0.3f);
 	glEnd();
 	glPopMatrix();
+	*/
 }
 void Layer::setColor(ColorRGBA argColor /*=ColorRGBA(0.2f, 0.2f, 0.2f, 1.0f)*/) //temp
 {

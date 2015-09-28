@@ -15,5 +15,5 @@ void Level::update()
 }
 void Level::pushObject(Object *argObject)
 {
-	objectVector.push_back(argObject);"
+	objectVector.push_back(argObject);
 }
