@@ -30,7 +30,15 @@ void animatedObjectTest(int argc, char **argv)
 {
 	TrnGlutFunctions::init(&argc, argv);
 	activeLevel = new Level();
-	//activeLevel->pushObject(new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f)));
+	Box *box = new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f));
+	activeLevel->pushObject(box);
+	Vec2Lerp *boxAnim = new Vec2Lerp(&box->posn, Vec2(-0.1f, 0.1f), Vec2(1.0f, 1.0f), 4000.0f);
+	/*
+	Vec2Lerp *boxAnim2 = new Vec2Lerp(&box->posn, Vec2(1.0f, 1.0f), Vec2(-1.0f, -1.0f), 6000.0f, boxAnim);
+	Vec2Lerp *boxAnim3 = new Vec2Lerp(&box->posn, Vec2(-1.0f, -1.0f), Vec2(-0.5f, 0.5f), 4000.0f, boxAnim2);
+	Vec2Lerp *boxAnim4 = new Vec2Lerp(&box->posn, Vec2(-0.5f, 0.5f), Vec2(0.8f, 0.5f), 3000.0f, boxAnim3);
+	*/
+	AnimationServer::getInstance()->registerAnimation(boxAnim);
 	glutMainLoop();
 }
 
@@ -43,7 +51,6 @@ void timerTest(int argMSecPeriod)
 		timer.idle();
 	}
 }
-
 }
 
 int main(int argc, char **argv)

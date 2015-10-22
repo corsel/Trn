@@ -1,6 +1,7 @@
 #ifndef OBJECT_H_INCLUDED
 #define OBJECT_H_INCLUDED
 
+#include <iostream>
 #include <GL/freeglut.h>
 #include "utils.h"
 
@@ -15,7 +16,8 @@ public:
 
 class Box : public Object
 {
-private:
+//private:
+public:
 	Vec2 size;
 	Vec2 posn;
 	ColorRGBA color;
@@ -27,4 +29,3 @@ public:
 };
 
 #endif //OBJECT_H_INCLUDED
-

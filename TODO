@@ -1,3 +1,4 @@
 * Test binded animations
+	- Animation constructor should not contain "*ref = start" in case of queued animations -> reset()
 * Implement textures
 * Implement texts in dialog boxes

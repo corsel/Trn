@@ -36,5 +36,3 @@ void TrnGlutFunctions::keyboard(unsigned char argKey, int argX, int argY)
 void TrnGlutFunctions::mouse(int argButton, int argState, int argX, int argY)
 {
 }
-
-

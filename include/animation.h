@@ -50,6 +50,7 @@ protected:
 	float lifetime;
 	float currentTime;
 	bool isDead;
+	bool deferredInit;
 	int iteration;
 	Animation *next = NULL;
 	
@@ -58,6 +59,7 @@ protected:
 public:
 	Animation(float argLifetime, Animation *argPrevious = NULL);
 	virtual ~Animation(void);
+	virtual void reset(void) = 0;
 	virtual void step(void) = 0;
 	virtual bool getIsDead(void);
 };
@@ -74,9 +76,9 @@ private:
 public:
 	Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifetime, Animation *argPrevious = NULL);
 	Vec2Lerp(Vec2 *argRef, Vec2 argRelEnd, float argLifetime, Animation *argPrevious = NULL);
+	void reset(void);
 	~Vec2Lerp(void);
 	void step(void); //virtual implementation
 };
 
 #endif //ANIMATION_H_INCLUDED
-

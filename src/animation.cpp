@@ -90,7 +90,14 @@ Animation::Animation(float argLifetime, Animation *argPrevious)
 : isDead(false), lifetime(argLifetime), iteration(0)
 {
 	if (argPrevious != NULL)
+	{
+		
 		argPrevious->setNext(this);
+	}
+}
+void Animation::reset()
+{
+	*ref = start;
 }
 Animation::~Animation()
 {
@@ -98,6 +105,7 @@ Animation::~Animation()
 		AnimationServer::getInstance()->registerAnimation(next);
 	std::cout << "Debug - Animation: Destructor called.\n";
 }
+
 bool Animation::getIsDead() { return isDead; }
 
 //Vec2Lerp class
