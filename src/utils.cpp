@@ -28,4 +28,26 @@ Vec2 Vec2::operator/(float argDivisor)
 //ColorRGBA struct
 ColorRGBA::ColorRGBA(float argRed /*=0.0f*/, float argGreen /*=0.0f*/, float argBlue /*=0.0f*/, float argAlpha /*=1.0f*/)
 : red(argRed), green(argGreen), blue(argBlue), alpha(argAlpha) {}
-
+ColorRGBA ColorRGBA::operator+(ColorRGBA argOther)
+{
+	return ColorRGBA(red + argOther.red, green + argOther.green, blue + argOther.blue, alpha + argOther.alpha);
+}
+void ColorRGBA::operator+=(ColorRGBA argOther)
+{
+	red += argOther.red;
+	green += argOther.green;
+	blue += argOther.blue;
+	alpha += argOther.alpha;
+}
+ColorRGBA ColorRGBA::operator-(ColorRGBA argOther)
+{
+	return ColorRGBA(red - argOther.red, green - argOther.green, blue - argOther.blue, alpha - argOther.alpha);
+}
+ColorRGBA ColorRGBA::operator*(float argMultiplier)
+{
+	return ColorRGBA(red * argMultiplier, green * argMultiplier, blue * argMultiplier, alpha * argMultiplier);
+}
+ColorRGBA ColorRGBA::operator/(float argDivisor)
+{
+	return ColorRGBA(red / argDivisor, green / argDivisor, blue / argDivisor, alpha / argDivisor);
+}

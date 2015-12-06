@@ -49,7 +49,7 @@ AnimationServer::~AnimationServer()
 }
 void *AnimationServer::threadLoop(void *argArgs) //static
 {
-	std::cout << "Debug - AnimationServer: threadLoop started.\n";
+	std::cout << "Debug - AnimationServer::threadLoop: Called.\n";
 	while(AnimationServer::getInstance()->killFlag)
 	{
 		instance->timer->start();
@@ -57,7 +57,7 @@ void *AnimationServer::threadLoop(void *argArgs) //static
 		{
 			if (animVector[i]->getIsDead())
 			{
-				std::cout << "Debug - AnimationServer: Animation killed: " << animVector[i] << std::endl;
+				std::cout << "Debug - AnimationServer::threadLoop: Animation killed: " << animVector[i] << std::endl;
 				delete animVector[i];
 				animVector.erase(animVector.begin() + i);
 				continue;
@@ -82,28 +82,23 @@ void AnimationServer::registerAnimation(Animation *argAnimation)
 int AnimationServer::getStepSize() { return stepSize; }
 
 //Animation class
-void Animation::setNext(Animation *argNext)
+void Animation::registerNext(Animation *argNext) //private
 {
-	next = argNext;
+	next.push_back(argNext);
 }
 Animation::Animation(float argLifetime, Animation *argPrevious)
 : isDead(false), lifetime(argLifetime), iteration(0)
 {
 	if (argPrevious != NULL)
 	{
-		
-		argPrevious->setNext(this);
+		argPrevious->registerNext(this);
 	}
-}
-void Animation::reset()
-{
-	*ref = start;
 }
 Animation::~Animation()
 {
-	if (next != NULL)
-		AnimationServer::getInstance()->registerAnimation(next);
-	std::cout << "Debug - Animation: Destructor called.\n";
+	for (int i = 0; i < next.size(); i++)
+		AnimationServer::getInstance()->registerAnimation(next[i]);
+	std::cout << "Debug - Animation::~Animation: Destructor called.\n";
 }
 
 bool Animation::getIsDead() { return isDead; }
@@ -112,29 +107,76 @@ bool Animation::getIsDead() { return isDead; }
 Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argStart, Vec2 argEnd, float argLifetime, Animation *argPrevious)
 : Animation(argLifetime, argPrevious), ref(argRef), start(argStart), end(argEnd) 
 {
+	if (argPrevious != NULL)
+		return;
 	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
 	stepDelta = (end - start) / numIterations;
 	*ref = start;
 }
 Vec2Lerp::Vec2Lerp(Vec2 *argRef, Vec2 argRelEnd, float argLifetime, Animation *argPrevious)
-: Animation(argLifetime, argPrevious), ref(argRef), start(*ref), end(start + argRelEnd) 
+: Animation(argLifetime, argPrevious), ref(argRef), end(start + argRelEnd) 
 {
+	if (argPrevious != NULL)
+		return;
 	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
 	stepDelta = (end - start) / numIterations;
-	*ref = start;
 }
 Vec2Lerp::~Vec2Lerp()
 {
-	std::cout << "Debug - Vec2Lerp: Destructor called.\n";
+	for (int i = 0; i < next.size(); i++)
+		next[i]->deferredInit((void*)ref);
+	std::cout << "Debug - Vec2Lerp::~Vec2Lerp: Destructor called.\n";
+}
+void Vec2Lerp::deferredInit(void *argDeferredInitParams) //virtual implementation
+{
+	Vec2 *deferredRef = (Vec2*)argDeferredInitParams;
+	end = end - start + *deferredRef;
+	start = *deferredRef;
+	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
+	stepDelta = (end - start) / numIterations;
 }
 void Vec2Lerp::step() //virtual implementation
 {
-	std::cout << "Debug - Vec2Lerp: \n\tanimation: " << this << "\tstep: " << iteration++ << "\tvalue: <" << ref->x << ", " << ref->y << ">\n";
+	//std::cout << "Debug - Vec2Lerp::step: \n\tanimation: " << this << "\tstep: " << iteration << "\tvalue: <" << ref->x << ", " << ref->y << ">\n";
 	*ref += stepDelta;
 	if (iteration >= numIterations)
 	{
 		*ref = end;
 		isDead = true;
-		std::cout << "Debug - Vec2Lerp: killing animation " << this << std::endl;
+		std::cout << "Debug - Vec2Lerp::step: killing animation " << this << std::endl;
 	}
+	iteration++;
+}
+
+//ColorAnim class
+ColorAnim::ColorAnim(ColorRGBA *argRef, ColorRGBA argEnd, float argLifetime, Animation *argPrevious)
+: Animation(argLifetime, argPrevious), ref(argRef), end(argEnd)
+{
+	if (argPrevious != NULL)
+		return;
+	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
+	stepDelta = (end - *ref) / numIterations;
+}
+ColorAnim::~ColorAnim()
+{
+	for (int i = 0; i < next.size(); i++)
+		next[i]->deferredInit(NULL);
+	std::cout << "Debug - ColorAnim::~ColorAnim: Destructor called.\n";
+}
+void ColorAnim::deferredInit(void* argDeferredInitParams) //virtual implementation
+{
+	numIterations = lifetime / (float)AnimationServer::getInstance()->getStepSize();
+	stepDelta = (end - *ref) / numIterations;
+}
+void ColorAnim::step(void) //virtual implementation
+{
+	//std::cout << "Debug - ColorAnim::step: \n\tanimation: " << this << "\tstep: " << iteration << "\tvalue: <" << ref->red << ", " << ref->green << ", " << ref->blue << ", " << ref->alpha << ">\n";
+	*ref += stepDelta;
+	if (iteration >= numIterations)
+	{
+		*ref = end;
+		isDead = true;
+		std::cout << "Debug - ColorAnim::step: killing animation " << this << std::endl;
+	}
+	iteration++;
 }

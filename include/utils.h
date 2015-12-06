@@ -22,6 +22,11 @@ struct ColorRGBA
 	float alpha;
 	
 	ColorRGBA(float argRed = 0.0f, float argGreen = 0.0f, float argBlue = 0.0f, float argAlpha = 1.0f);
+	ColorRGBA operator+(ColorRGBA argOther);
+	void operator+=(ColorRGBA argOther);
+	ColorRGBA operator-(ColorRGBA argOther);
+	ColorRGBA operator*(float argMultiplier);
+	ColorRGBA operator/(float argDivisor);
 };
 
 #endif //UTILS_H_INCLUDED

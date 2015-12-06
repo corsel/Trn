@@ -33,11 +33,9 @@ void animatedObjectTest(int argc, char **argv)
 	Box *box = new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f));
 	activeLevel->pushObject(box);
 	Vec2Lerp *boxAnim = new Vec2Lerp(&box->posn, Vec2(-0.1f, 0.1f), Vec2(1.0f, 1.0f), 4000.0f);
-	/*
-	Vec2Lerp *boxAnim2 = new Vec2Lerp(&box->posn, Vec2(1.0f, 1.0f), Vec2(-1.0f, -1.0f), 6000.0f, boxAnim);
-	Vec2Lerp *boxAnim3 = new Vec2Lerp(&box->posn, Vec2(-1.0f, -1.0f), Vec2(-0.5f, 0.5f), 4000.0f, boxAnim2);
-	Vec2Lerp *boxAnim4 = new Vec2Lerp(&box->posn, Vec2(-0.5f, 0.5f), Vec2(0.8f, 0.5f), 3000.0f, boxAnim3);
-	*/
+	Vec2Lerp *boxAnim2 = new Vec2Lerp(&box->posn, Vec2(1.0f, 1.0f), Vec2(0.0f, -1.0f), 5000.0f, boxAnim);
+	ColorAnim *colorAnim = new ColorAnim(&box->color, ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f), 2000.0f, boxAnim2);
+	Vec2Lerp *boxAnim3 = new Vec2Lerp(&box->posn, Vec2(-1.0f, 1.0f), 3000.0f, boxAnim2);
 	AnimationServer::getInstance()->registerAnimation(boxAnim);
 	glutMainLoop();
 }
