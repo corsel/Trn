@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 #include "utils.h"
 #include "animation.h"
+#include "texture.h"
 
 class Layer
 {

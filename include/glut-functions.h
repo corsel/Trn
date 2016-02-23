@@ -7,6 +7,7 @@
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 #include "level.h"
+#include "texture.h"
 
 extern Level *activeLevel;
 

@@ -28,6 +28,7 @@ void animationTest()
 void animatedObjectTest(int argc, char **argv)
 {
 	TrnGlutFunctions::init(&argc, argv);
+	TextureServer::getInstance();
 	activeLevel = new Level();
 	Box *box = new Box(Vec2(-0.1f, 0.1f), Vec2(0.3f, 0.2f), ColorRGBA(0.2f, 0.6f, 0.3f, 1.0f));
 	activeLevel->pushObject(box);
