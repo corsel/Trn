@@ -2,7 +2,6 @@
 #include <vector>
 #include <GL/freeglut.h>
 #include "glut-functions.h"
-#include "xml-parser.h"
 #include "animation.h"
 
 namespace Test
