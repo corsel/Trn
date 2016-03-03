@@ -15,7 +15,7 @@ void TrnGlutFunctions::init(int *argc, char **argv)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-10.0f, 10.0f, 10.0f, 10.0f, 0.5f, 10.0f);
-	
+	glEnable(GL_TEXTURE_2D);
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 	
 	glutIdleFunc(TrnGlutFunctions::display);	

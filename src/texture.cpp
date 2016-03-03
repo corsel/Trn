@@ -7,10 +7,13 @@ TextureServer::TextureServer()
 	glGenTextures(numTextures, TextureServer::textureHandle);
 	
 	textureBuffer = new char*[numTextures];
+	textureSize = new int[numTextures * 2];
 }
 TextureServer::~TextureServer()
 {
 	delete [] TextureServer::textureHandle;
+	delete [] textureBuffer;
+	delete [] textureSize;
 }
 TextureServer *TextureServer::getInstance() //static
 {
@@ -18,7 +21,7 @@ TextureServer *TextureServer::getInstance() //static
 		instance = new TextureServer();
 	return instance;
 }
-void TextureServer::generateTexture(const char *argFileName, GLuint argTextureIndex)
+void TextureServer::generateTexture(const char *argFileName, GLuint argTextureIndex, const int argWidth, const int argHeight)
 {
 	if (argTextureIndex >= numTextures)
 	{
@@ -33,7 +36,8 @@ void TextureServer::generateTexture(const char *argFileName, GLuint argTextureIn
 		return;
 	}
 	std::cout << "Debug - TextureServer::generateTexture: Texture " << argTextureIndex << " load successful.\n"; //Debug
-	
+	textureSize[argTextureIndex * 2] = argWidth;
+	textureSize[argTextureIndex * 2 + 1] = argHeight;
 	int bufferSize;
 	bitmapFile.seekg(0, std::ios_base::end);
 	bufferSize = bitmapFile.tellg();
@@ -51,6 +55,8 @@ void TextureServer::generateTexture(const char *argFileName, GLuint argTextureIn
 		std::cout << /*(short int)*/textureBuffer[0][i] << " ";
 	}
 	//
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSize[argTextureIndex * 2], textureSize[argTextureIndex * 2 + 1], 0, GL_BGR, GL_UNSIGNED_BYTE/*??*/, (GLvoid*)(textureBuffer[argTextureIndex] + bitmapHeaderOffset));
 	
 	bitmapFile.close();
 }
