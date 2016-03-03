@@ -7,6 +7,7 @@ void TrnGlutFunctions::init(int *argc, char **argv)
 	glutInit(argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowSize(TrnGlutFunctions::screenWidth, TrnGlutFunctions::screenHeight);
+	glutInitWindowPosition(500, 200);
 	glutCreateWindow("test window");
 	
 	if (TrnGlutFunctions::fullscreen) glutFullScreen();

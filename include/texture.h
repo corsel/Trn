@@ -9,13 +9,14 @@ class TextureServer //Singleton
 {
 private:
 	static TextureServer *instance;
-	GLuint *textureHandle;
+	static GLuint *textureHandle;
 		
 	TextureServer(void);
 	
 public:
 	~TextureServer(void);
 	static TextureServer *getInstance(void);
+	static void bindTexture(GLuint argTextureIndex);
 };
 
 #endif //TEXTURE_H_INCLUDED
