@@ -1,18 +1,12 @@
-#include <iostream>
 #include "texture.h"
 
 TextureServer *TextureServer::instance = NULL;
-GLuint *TextureServer::textureHandle = NULL;
 TextureServer::TextureServer() 
 {
 	TextureServer::textureHandle = new GLuint[numTextures];
 	glGenTextures(numTextures, TextureServer::textureHandle);
 	
-	//debug
-	for (int i = 0; i < 3; i++)
-	{
-		std::cout << "Debug - TextureServer::TextureServer: " << TextureServer::textureHandle[i] << std::endl;
-	}
+	textureBuffer = new char*[numTextures];
 }
 TextureServer::~TextureServer()
 {
@@ -24,11 +18,48 @@ TextureServer *TextureServer::getInstance() //static
 		instance = new TextureServer();
 	return instance;
 }
-void TextureServer::bindTexture(GLuint argTextureIndex) //static
+void TextureServer::generateTexture(const char *argFileName, GLuint argTextureIndex)
+{
+	if (argTextureIndex >= numTextures)
+	{
+		std::cout << "Error - TextureServer::generateTexture: Invalid texture index: " << argTextureIndex << std::endl;
+		return;
+	}
+	std::ifstream bitmapFile;
+	bitmapFile.open(argFileName);
+	if (!bitmapFile.is_open())
+	{
+		std::cout << "Error - TextureServer::generateTexture: Invalid texture file: " << argFileName << std::endl;
+		return;
+	}
+	std::cout << "Debug - TextureServer::generateTexture: Texture " << argTextureIndex << " load successful.\n"; //Debug
+	
+	int bufferSize;
+	bitmapFile.seekg(0, std::ios_base::end);
+	bufferSize = bitmapFile.tellg();
+	bitmapFile.seekg(0, std::ios_base::beg);
+	std::cout << "Debug - TextureServer::generateTexture: Texture size: " << bufferSize << std::endl; //Debug
+	textureBuffer[argTextureIndex] = new char [bufferSize];
+	bitmapFile.read(textureBuffer[argTextureIndex], bufferSize * sizeof(char));
+	
+	//Debug
+	std::cout << "Debug - TextureServer::generateTexture: Behold! Incoming bitmap stream: \n";
+	for (int i = 0; i < bufferSize; i++)
+	{
+		if (i % 40 == 0)
+			std::cout << std::endl;
+		std::cout << /*(short int)*/textureBuffer[0][i] << " ";
+	}
+	//
+	
+	bitmapFile.close();
+}
+void TextureServer::bindTexture(GLuint argTextureIndex)
 {
 	if (argTextureIndex >= numTextures)
 	{
 		std::cout << "Error - TextureServer::bindTexture: Invalid texture index: " << argTextureIndex << std::endl;
+		return;
 	}
 	glBindTexture(GL_TEXTURE_2D, TextureServer::textureHandle[argTextureIndex]);
 }

@@ -49,6 +49,11 @@ void timerTest(int argMSecPeriod)
 		timer.idle();
 	}
 }
+
+void textureTest(const char *argTextureFile)
+{
+	TextureServer::getInstance()->generateTexture(argTextureFile, 0);
+}
 }
 
 int main(int argc, char **argv)
@@ -57,7 +62,8 @@ int main(int argc, char **argv)
 	//Test::animationTest();
 	//Test::displayTest(argc, argv);
 	//Test::timerTest(atoi(argv[1]));
-	Test::animatedObjectTest(argc, argv);
+	//Test::animatedObjectTest(argc, argv);
+	Test::textureTest("data/test_texture.bmp");
 
 	std::cout << "\nfin.\n";
 	while(1);
